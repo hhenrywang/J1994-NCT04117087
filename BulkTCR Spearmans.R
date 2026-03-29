@@ -10,7 +10,7 @@ library(tidyr)
 
 ##### A. Data Import & Reformat #####
 # Sets the working directory.
-setwd("C:/Users/henry/Dropbox/Research/Jaffee Lab/J1994/Sequencing/Bulk")
+setwd()
 
 # Setting the data input directory, using Tumor subdirectory for tissue sequencing
 Dirwd <- getwd()

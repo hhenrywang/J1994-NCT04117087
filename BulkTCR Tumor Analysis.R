@@ -1,6 +1,5 @@
 # This script loads previously identified mKRAS & TE TCRs
 # It identifies tumor infiltrating TCRs and additional Public TCRs
-# Last edited by Henry Wang on 06.19.25
 
 ##### Libraries to load
 library(ggplot2)
@@ -20,7 +19,7 @@ Outlier_TCR <- TRUE
 
 ##### A. Loading Data #####
 # Set the working directory. Change as needed
-setwd("C:/Users/henry/Dropbox/Research/Jaffee Lab/J1994/Sequencing/Bulk")
+setwd()
 
 # Setting input and output directories
 Dirwd <- getwd()

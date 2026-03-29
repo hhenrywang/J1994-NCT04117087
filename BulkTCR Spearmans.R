@@ -1,5 +1,4 @@
-# This script calculate the correlation between peripheral and tumor frequency
-# Last edited by Henry Wang on 06.18.25
+# This script plots the peripheral and tumor frequency
 
 ##### Libraries to load
 library(ggplot2)
@@ -117,13 +116,10 @@ merge_tumor <- function(source, df, name) {
 TCRs_TE_merged <- merge_tumor(TCRs_tumor, TCRs_TE, Treatment_enriched)
 TCRs_mKRAS_merged <- merge_tumor(TCRs_tumor, TCRs_mKRAS, TCR)
 
-#### B. Statistical Testing ####
-# Spearman's correlation testing
-cor.test(TCRs_mKRAS_merged$Freq, TCRs_mKRAS_merged$Frequency_Post, method = "spearman", exact = FALSE)
+TCRs_mKRAS_merged <- TCRs_mKRAS_merged %>%
+  mutate(Patient.y = ifelse(is.na(Patient.y), Patient.x, Patient.y))
 
-cor.test(TCRs_TE_merged$Freq, TCRs_TE_merged$Frequency_Post, method = "spearman", exact = FALSE)
-
-#### C. Plotting ####
+#### B. Plotting ####
 # Plotting mKRAS TCRs
 TCRs_mKRAS_merged <- TCRs_mKRAS_merged %>%
   mutate(
@@ -131,22 +127,38 @@ TCRs_mKRAS_merged <- TCRs_mKRAS_merged %>%
     Frequency_Post_adj = ifelse(Frequency_Post == 0, (min(Frequency_Post[Frequency_Post > 0]) / 2), Frequency_Post)
   )
 
+TCRs_mKRAS_merged <- TCRs_mKRAS_merged %>%
+  mutate(Patient.y = factor(Patient.y, levels = c(8, 20, 21, 28, 29)))
+
 y_threshold <- 0.7 * min(TCRs_mKRAS_merged$Frequency_Post[TCRs_mKRAS_merged$Frequency_Post > 0])
+
+xlim <- range(TCRs_mKRAS_merged$Freq_adj)
+ylim <- range(TCRs_mKRAS_merged$Frequency_Post_adj)
 
 plot <- ggplot(TCRs_mKRAS_merged, aes(x = Freq_adj, y = Frequency_Post_adj)) +
   geom_point(size = 3, alpha = 0.5) +
   geom_hline(yintercept = y_threshold, linetype = "dashed", color = "black") +
-  scale_x_log10() +
-  scale_y_log10() +
-  labs(
-    x = "Peripheral Frequency after Expansion",
-    y = "Tumor Frequency on-treatment",
-    title = "mKRAS TCR infiltration"
+  scale_x_log10(limits = xlim) +
+  scale_y_log10(limits = ylim) +
+  facet_wrap(~Patient.y,
+    nrow = 1,
+    labeller = labeller(Patient.y = function(x) paste("Patient", x))
   ) +
-  theme(aspect.ratio = 1)
+  labs(
+    x = "TCR Frequency - Peripheral On-treatment after Expansion",
+    y = "TCR Frequency - Tumor On-treatment"
+  ) +
+  theme(
+    aspect.ratio = 1,
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 12),
+    strip.text = element_text(size = 12)
+  )
 
-ggsave(filename = paste0(DirOutputAll, "mKRAS_infiltration.tiff"),
-       plot = plot, device = "tiff", width = 6, height = 6)
+ggsave(
+  filename = file.path(DirOutputAll, "mKRAS_infiltration.tiff"),
+  plot = plot, device = "tiff", width = 14, height = 5
+)
 
 # Plotting Treatment-enriched TCRs
 TCRs_TE_merged <- TCRs_TE_merged %>%
@@ -154,19 +166,36 @@ TCRs_TE_merged <- TCRs_TE_merged %>%
     Freq_adj = ifelse(Freq == 0, (min(Freq[Freq > 0]) / 2), Freq),
     Frequency_Post_adj = ifelse(Frequency_Post == 0, (min(Frequency_Post[Frequency_Post > 0]) / 2), Frequency_Post)
   )
+
+TCRs_TE_merged <- TCRs_TE_merged %>%
+  mutate(Patient.y = factor(Patient.y, levels = c(8, 20, 21, 28, 29)))
+
 y_threshold <- 0.7 * min(TCRs_TE_merged$Frequency_Post[TCRs_TE_merged$Frequency_Post > 0])
+
+xlim <- range(TCRs_TE_merged$Freq_adj)
+ylim <- range(TCRs_TE_merged$Frequency_Post_adj)
 
 plot <- ggplot(TCRs_TE_merged, aes(x = Freq_adj, y = Frequency_Post_adj)) +
   geom_point(size = 3, alpha = 0.5) +
   geom_hline(yintercept = y_threshold, linetype = "dashed", color = "black") +
-  scale_x_log10() +
-  scale_y_log10() +
-  labs(
-    x = "Peripheral Frequency",
-    y = "Tumor Frequency on-treatment",
-    title = "Treatment-enriched TCR infiltration"
+  scale_x_log10(limits = xlim) +
+  scale_y_log10(limits = ylim) +
+  facet_wrap(~Patient.y,
+             nrow = 1,
+             labeller = labeller(Patient.y = function(x) paste("Patient", x))
   ) +
-  theme(aspect.ratio = 1)
+  labs(
+    x = "TCR Frequency - Peripheral On-treatment",
+    y = "TCR Frequency - Tumor On-treatment"
+  ) +
+  theme(
+    aspect.ratio = 1,
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 12),
+    strip.text = element_text(size = 12)
+  )
 
-ggsave(filename = paste0(DirOutputAll, "treatment_enriched_infiltration.tiff"),
-       plot = plot, device = "tiff", width = 6, height = 6)
+ggsave(
+  filename = file.path(DirOutputAll, "treatment_enriched_infiltration.tiff"),
+  plot = plot, device = "tiff", width = 14, height = 5
+)

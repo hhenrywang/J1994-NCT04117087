@@ -1,6 +1,5 @@
 # This script loads Adaptive Bulk TCRSeq Data to identify mKRAS T-cells per patient
 # Clonotypes are tracked by their unique TCR Beta CDR3 amino acid sequence
-# Last edited by Henry Wang on 06.19.25
 
 # Loading Libraries
 library(ggplot2)
@@ -28,7 +27,7 @@ FDR_TE <- 0.01
 
 ##### A. Loading Data #####
 # Set the working directory. Change as needed
-setwd("C:/Users/henry/Dropbox/Research/Jaffee Lab/J1994/Sequencing/Bulk")
+setwd()
 
 # Setting input and output directories
 Dirwd <- getwd()

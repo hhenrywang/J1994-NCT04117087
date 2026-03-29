@@ -1,6 +1,5 @@
 # This imports the summary of each patient's mKRAS clonotypes
 # to create a master summary table and identify public clonotypes
-# Last edited by Henry Wang on 06.19.25
 
 ##### Libraries to load
 library(ggplot2)
@@ -14,7 +13,7 @@ library(readr)
 
 ##### A. Data Import #####
 # Set the working directory
-setwd("C:/Users/henry/Dropbox/Research/Jaffee Lab/J1994/Sequencing/Bulk")
+setwd()
 
 # Set data directories
 Dirwd <- getwd()
